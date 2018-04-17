@@ -55,6 +55,11 @@ export default class extends React.Component {
 
     onChange = (e) => {
         const val = e.target.value;
+
+        if(!/^[a-zA-Z0-9]+$|^$/.test(val)){
+            return;
+        }
+
         this.setState(state => {
             state.name = val;
             return state
