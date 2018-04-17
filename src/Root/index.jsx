@@ -10,7 +10,7 @@ export default class extends React.Component {
         this.state = {
             weathers: [],
             name: '',
-            count: ''
+            count: 0
         };
     }
 
