@@ -8,7 +8,6 @@ export default class extends React.Component {
             this.weather = props.weather;
             this.deleteWeather = props.deleteWeather;
         }
-        console.log(this.props.load);
     }
 
     render() {

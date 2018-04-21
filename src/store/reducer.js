@@ -2,10 +2,13 @@ import actions from './actions';
 import Immutable from 'immutable';
 
 
-const initialWeatherState = {
-    weatherIds: Immutable.List.of(),
-    weathers: Immutable.Map({})
-};
+const initialWeatherState = localStorage.getItem('weathers') ?
+    {
+        weatherIds: Immutable.List(JSON.parse(localStorage.getItem('weatherIds'))),
+        weathers: Immutable.Map((JSON.parse(localStorage.getItem('weathers'))))
+    }
+    : {weatherIds: Immutable.List(), weathers: Immutable.Map({})};
+
 
 export default (state = initialWeatherState, action) => {
     switch (action.type) {
@@ -26,7 +29,7 @@ export default (state = initialWeatherState, action) => {
 
             return {weatherIds: newIds, weathers: newWeaths};
         case actions.CLEAR_WEATHERS:
-            return {weathers: Immutable.Map({}), weatherIds: Immutable.List.of()};
+            return {weathers: Immutable.Map({}), weatherIds: Immutable.List()};
     }
     return state;
 };

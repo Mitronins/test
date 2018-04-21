@@ -18,6 +18,13 @@ class Root extends React.Component {
         };
     }
 
+    closeListener = () => {
+        localStorage.setItem('weatherIds', JSON.stringify(this.props.store.weatherIds.toArray()));
+        localStorage.setItem('weathers', JSON.stringify(this.props.store.weathers.toMap()));
+    };
+
+    componentWillMount = () => window.addEventListener('beforeunload', this.closeListener);
+
     addCity = () => {
         if (this.state.name.length === 0) {
             alert('Пустое поле');
@@ -40,6 +47,9 @@ class Root extends React.Component {
             this.setState({
                 name: ''
             });
+
+            data.id = String(data.id);
+
             if (this.props.store.weathers.get(data.id)) {
                 alert('Вы уже добавили этот город');
             } else {
@@ -94,6 +104,9 @@ class Root extends React.Component {
             </div>
         );
     }
+
+    componentWillUnmount = () => window.removeEventListener('beforeunload', this.closeListener);
+
 }
 
 const mapStateToProps = (store) => {
