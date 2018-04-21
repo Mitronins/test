@@ -13,12 +13,8 @@ class Root extends React.Component {
 
 
         this.state = {
-            weathers: [],
-            name: '',
-            count: 0
+            name: ''
         };
-
-        this.props.actions.addWeather('pis')
     }
 
     addCity = () => {
@@ -27,8 +23,8 @@ class Root extends React.Component {
             return;
         }
 
-
-        fetch(`http://api.openweathermap.org/data/2.5/weather?q=${this.state.name}&appid=5aeb3e30cb04b84453644d3c7e90a7e2&&metric=celsius`).then(response => {
+        let url = `http://api.openweathermap.org/data/2.5/weather?q=${this.state.name}&appid=5aeb3e30cb04b84453644d3c7e90a7e2&&metric=celsius`;
+        fetch(url).then(response => {
             const {status} = response;
             if (status === 404) {
                 alert('Не найдено такого города');
@@ -40,10 +36,13 @@ class Root extends React.Component {
             }
         }).then(data => {
             this.setState({
-                weathers: this.state.weathers.concat(data),
-                count: ++this.state.count,
                 name: ''
             });
+            if (this.props.store.weathers.get(data.id)) {
+                alert('Вы уже добавили этот город');
+            } else {
+                this.props.actions.addWeather({data});
+            }
         }).catch(err => {
             console.log(err);
         });
@@ -51,7 +50,7 @@ class Root extends React.Component {
     };
 
     clear = () => {
-        this.setState({weathers: [], count: 0});
+        this.props.actions.clearWeather();
     };
 
     onChange = (e) => {
@@ -62,32 +61,27 @@ class Root extends React.Component {
         }
 
         this.setState({
-            weathers: this.state.weathers,
-            name: val,
-            count: this.state.count
+            name: val
         });
     };
 
-    deleteWeather = (index) => () => {
-        delete this.state.weathers[index];
-        this.state.count--;
-        this.setState({
-            weathers: this.state.weathers,
-            name: this.state.name,
-            count: this.state.count
-        })
+    deleteWeather = id => () => {
+        this.props.actions.deleteWeather({id})
     };
 
     render() {
-        const weathers = this.state.weathers.map((weather, index) => {
-            return <CityWeather key={index} weather={weather} deleteWeather={this.deleteWeather(index)}/>
+        const weathers = this.props.store.weatherIds.map((id) => {
+            return <CityWeather
+                key={id}
+                weather={this.props.store.weathers.get(id)}
+                deleteWeather={this.deleteWeather(id)}/>
         });
         return (
             <div className={styles.container}>
                 <input type="text" value={this.state.name} onChange={this.onChange} className={styles['input-city']}/>
                 <button className={styles['btn-add']} onClick={this.addCity}>Add</button>
                 <button className={styles['btn-clear']} onClick={this.clear}>Clear</button>
-                {(this.state.count === 0) &&
+                {(this.props.store.weatherIds.size === 0) &&
                 <div className={styles['empty-dashboard']}>Dashboard is empty</div>}
                 <div className={styles['container-weather']}>{weathers}</div>
             </div>
@@ -98,7 +92,8 @@ class Root extends React.Component {
 const mapStateToProps = (store) => {
     return {
         store: {
-            weathers: store.weathers
+            weathers: store.weathers,
+            weatherIds: store.weatherIds
         }
     };
 };
@@ -107,6 +102,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         actions: {
             addWeather: data => dispatch(actions.addWeather(data)),
+            deleteWeather: data => dispatch(actions.deleteWeather(data)),
+            clearWeather: () => dispatch(actions.clearWeather())
         }
     }
 };

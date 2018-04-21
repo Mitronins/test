@@ -9,16 +9,23 @@ const addWeather = data => {
     }
 };
 
-const deleteWeather = id => {
+const deleteWeather = data => {
     return {
         type: DELETE_WEATHER,
-        id
+        data
+    }
+};
+
+const clearWeather = () => {
+    return {
+        type: CLEAR_WEATHERS,
     }
 };
 
 export default {
     addWeather,
     deleteWeather,
+    clearWeather,
 
     DELETE_WEATHER,
     ADD_WEATHER,
