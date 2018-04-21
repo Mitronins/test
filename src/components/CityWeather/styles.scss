@@ -10,9 +10,19 @@
   display: inline-block;
   vertical-align: top;
 
-  &:hover .btn-delete{
+  &:hover .btn-delete {
     display: block;
   }
+}
+
+.spinner {
+  position: relative;
+  top: 50px;
+  height: 40px;
+  background-image: url('./images/spinner.svg');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .btn-delete {

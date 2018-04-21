@@ -13,7 +13,8 @@ class Root extends React.Component {
 
 
         this.state = {
-            name: ''
+            name: '',
+            isLoad: false
         };
     }
 
@@ -22,9 +23,10 @@ class Root extends React.Component {
             alert('Пустое поле');
             return;
         }
-
+        this.setState({isLoad: true});
         let url = `http://api.openweathermap.org/data/2.5/weather?q=${this.state.name}&appid=5aeb3e30cb04b84453644d3c7e90a7e2&&metric=celsius`;
         fetch(url).then(response => {
+            this.setState({isLoad: false});
             const {status} = response;
             if (status === 404) {
                 alert('Не найдено такого города');
@@ -44,6 +46,7 @@ class Root extends React.Component {
                 this.props.actions.addWeather({data});
             }
         }).catch(err => {
+            this.setState({isLoad: false});
             console.log(err);
         });
 
@@ -83,7 +86,11 @@ class Root extends React.Component {
                 <button className={styles['btn-clear']} onClick={this.clear}>Clear</button>
                 {(this.props.store.weatherIds.size === 0) &&
                 <div className={styles['empty-dashboard']}>Dashboard is empty</div>}
-                <div className={styles['container-weather']}>{weathers}</div>
+                <div className={styles['container-weather']}>
+                    {weathers}
+                    {this.state.isLoad && <CityWeather load={true}/>}
+                </div>
+
             </div>
         );
     }
